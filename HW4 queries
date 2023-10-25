@@ -215,8 +215,8 @@ create table payment
     customer_id     int(10) not null,
     staff_id        int(10) not null,
     rental_id       int(10) not null,
-    amount          int(10) not null,
-    payment_date    date not null,
+    amount          decimal(10,2) not null,
+    payment_date    datetime not null,
     
     foreign key(customer_id) references customer(customer_id),
     foreign key(staff_id) references staff(staff_id),
