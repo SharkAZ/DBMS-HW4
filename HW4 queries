@@ -8,7 +8,7 @@ use hw4;
 
 create table actor
 (
-	actor_id		int(4) not null,
+    actor_id		int(4) not null,
     first_name		varchar(40) not null,
     last_name		varchar(40) not null,
     primary key(actor_id)
@@ -18,8 +18,8 @@ create table actor
 
 create table country
 (
-	country_id		int(10) not null,
-    country			varchar(40) not null,
+    country_id		int(10) not null,
+    country		varchar(40) not null,
     primary key(country_id)
 );
 
@@ -27,8 +27,8 @@ create table country
 
 create table language
 (
-	language_id		int(10) not null,
-    name			varchar(40) not null,
+    language_id		int(10) not null,
+    name		varchar(40) not null,
     primary key(language_id)
 );
 
@@ -36,8 +36,8 @@ create table language
 
 create table film
 (
-	film_id				int(10) not null,
-    title				varchar(100) not null,
+    film_id			int(10) not null,
+    title			varchar(100) not null,
     description			varchar(1000) not null,
     release_year		date not null,
     language_id			int(10) not null,
@@ -45,10 +45,10 @@ create table film
 
     rental_duration		int(10) not null,
     rental_rate			decimal(10, 2) not null,
-    length				int(10) not null,
-    replacement_cost	decimal(10, 2) not null,
-    rating				varchar(40) not null,
-    special_features	varchar(100) not null,
+    length			int(10) not null,
+    replacement_cost		decimal(10, 2) not null,
+    rating			varchar(40) not null,
+    special_features		varchar(100) not null,
     
     primary key(film_id),
     foreign key(language_id) references language(language_id),
@@ -77,8 +77,8 @@ create table film_actor
 
 create table category
 (
-	category_id		int(10) not null,
-    name			varchar(40) not null,
+    category_id		int(10) not null,
+    name		varchar(40) not null,
     primary key(category_id),
     constraint name_constr check (name in ('Animation', 'Comedy', 'Family', 'Foreign', 'Sci-Fi', 'Travel', 'Children', 'Drama', 'Horror', 'Action', 'Classics', 'Games', 'New', 'Documentary', 'Sports', 'Music'))
 );
@@ -87,8 +87,8 @@ create table category
 
 create table film_category
 (
-	film_id			int(10) not null,
-	category_id		int(10) not null,
+    film_id		int(10) not null,
+    category_id		int(10) not null,
     foreign key(film_id) references film(film_id),
     foreign key(category_id) references category(category_id),
     primary key(film_id, category_id) 
@@ -98,9 +98,9 @@ create table film_category
 
 create table city
 (
-	city_id			int(10) not null,
-    city			varchar(40)	not null,
-	country_id		int(10) not null,
+    city_id		int(10) not null,
+    city		varchar(40) not null,
+    country_id		int(10) not null,
     
     primary key(city_id),
     foreign key(country_id) references country(country_id)
@@ -127,8 +127,8 @@ create table address
 
 create table store
 (
-	store_id		int(10) not null,
-	address_id		int(10) not null,
+    store_id		int(10) not null,
+    address_id		int(10) not null,
     
     primary key(store_id),
     foreign key(address_id) references address(address_id)
@@ -138,16 +138,16 @@ create table store
 
 create table customer
 (
-	customer_id		int(10) not null,
-	store_id		int(10) not null,
-    first_name		varchar(40)	not null,
-    last_name		varchar(40)	not null,
-    email			varchar(40)	not null,
-	address_id		int(10) not null,
-    active			tinyint check (active in(0,1)),
+    customer_id		int(10) not null,
+    store_id		int(10) not null,
+    first_name		varchar(40) not null,
+    last_name		varchar(40) not null,
+    email		varchar(40) not null,
+    address_id		int(10) not null,
+    active		tinyint check (active in(0,1)),
     
     primary key(customer_id),
-	foreign key(store_id) references store(store_id),
+    foreign key(store_id) references store(store_id),
     foreign key(address_id) references address(address_id)
 );
 
