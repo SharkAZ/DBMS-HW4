@@ -144,7 +144,7 @@ create table customer
     last_name		varchar(40) not null,
     email		    varchar(40) not null,
     address_id		int(10) not null,
-    active          int(1) not null,
+    active          boolean not null,
     
     constraint active_constr check (active in (0, 1)),
     primary key(customer_id),
@@ -164,11 +164,11 @@ create table staff
     
     email           varchar(40) not null,
     store_id        int(10) not null,
-    active          int(1) not null,
+    active          boolean not null,
     username        varchar(40) not null,
     password        varchar(40) not null,
 
-    constraint active_constr check (active in (0, 1)),
+    constraint check_active_constr check (active in (0, 1)),
     foreign key(address_id) references address(address_id),
     foreign key(store_id) references store(store_id),
     primary key(staff_id) 
@@ -192,10 +192,10 @@ create table inventory
 create table rental
 (
     rental_id       int(10) not null,
-    rental_date     date not null,
+    rental_date     datetime not null,
     inventory_id    int(10) not null,
     customer_id     int(10) not null,
-    return_date     date not null,
+    return_date     datetime not null,
     staff_id        int(10) not null,
     
     unique(rental_date),
