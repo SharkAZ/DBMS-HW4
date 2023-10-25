@@ -1,0 +1,363 @@
+create database hw4;
+
+============================================
+
+use hw4;
+
+============================================
+
+create table actor
+(
+	actor_id		int(4) not null,
+    first_name		varchar(40) not null,
+    last_name		varchar(40) not null,
+    primary key(actor_id)
+);
+
+============================================
+
+create table country
+(
+	country_id		int(10) not null,
+    country			varchar(40) not null,
+    primary key(country_id)
+);
+
+============================================
+
+create table language
+(
+	language_id		int(10) not null,
+    name			varchar(40) not null,
+    primary key(language_id)
+);
+
+============================================
+
+create table film
+(
+	film_id				int(10) not null,
+    title				varchar(100) not null,
+    description			varchar(1000) not null,
+    release_year		date not null,
+    language_id			int(10) not null,
+   
+
+    rental_duration		int(10) not null,
+    rental_rate			decimal(10, 2) not null,
+    length				int(10) not null,
+    replacement_cost	decimal(10, 2) not null,
+    rating				varchar(40) not null,
+    special_features	varchar(100) not null,
+    
+    primary key(film_id),
+    foreign key(language_id) references language(language_id),
+
+
+    constraint rental_duration_constr check (rental_duration between 2 and 8),
+    constraint rental_rate_constr check (rental_rate between 0.99 and 6.99),
+    constraint length_constr check (length between 30 and 200),
+    constraint replacement_cost_constr check (replacement_cost between 5.00 and 100.00),
+    constraint rating_constr check (rating in ('PG', 'G', 'NC-17', 'PG-13', 'R')),
+    constraint special_features_constr check (special_features in ('Behind the Scenes', 'Commentaries', 'Deleted Scenes', 'Trailers'))
+);
+
+============================================
+
+create table film_actor
+(
+    actor_id    int(4) not null,
+    film_id     int(10) not null,
+    foreign key(actor_id) references actor(actor_id),
+    foreign key(film_id) references film(film_id),
+    primary key(actor_id, film_id)
+);
+
+============================================
+
+create table category
+(
+	category_id		int(10) not null,
+    name			varchar(40) not null,
+    primary key(category_id),
+    constraint name_constr check (name in ('Animation', 'Comedy', 'Family', 'Foreign', 'Sci-Fi', 'Travel', 'Children', 'Drama', 'Horror', 'Action', 'Classics', 'Games', 'New', 'Documentary', 'Sports', 'Music'))
+);
+
+============================================
+
+create table film_category
+(
+	film_id			int(10) not null,
+	category_id		int(10) not null,
+    foreign key(film_id) references film(film_id),
+    foreign key(category_id) references category(category_id),
+    primary key(film_id, category_id) 
+);
+
+============================================
+
+create table city
+(
+	city_id			int(10) not null,
+    city			varchar(40)	not null,
+	country_id		int(10) not null,
+    
+    primary key(city_id),
+    foreign key(country_id) references country(country_id)
+    
+);
+
+============================================
+
+create table address
+(
+    address_id      int(10) not null,
+    address         varchar(1000) not null,
+    address2        varchar(1000) not null,
+    district        varchar(40) not null,
+    city_id         int(10) not null,
+    postal_code     int(10) not null,
+    phone           int(40) not null,
+    
+    primary key(address_id),
+    foreign key(city_id) references city(city_id)
+);
+
+============================================
+
+create table store
+(
+	store_id		int(10) not null,
+	address_id		int(10) not null,
+    
+    primary key(store_id),
+    foreign key(address_id) references address(address_id)
+);
+
+============================================
+
+create table customer
+(
+	customer_id		int(10) not null,
+	store_id		int(10) not null,
+    first_name		varchar(40)	not null,
+    last_name		varchar(40)	not null,
+    email			varchar(40)	not null,
+	address_id		int(10) not null,
+    active			tinyint check (active in(0,1)),
+    
+    primary key(customer_id),
+	foreign key(store_id) references store(store_id),
+    foreign key(address_id) references address(address_id)
+);
+
+/***
+create table customer
+(
+	customer_id		int(10) not null,
+	store_id		int(10) not null,
+    first_name		varchar(40)	not null,
+    last_name		varchar(40)	not null,
+    email			varchar(40)	not null,
+	address_id		int(10) not null,
+    active			tinyint ,
+    
+    primary key(customer_id),
+	foreign key(store_id) references store(store_id),
+    foreign key(address_id) references address(address_id)
+    constraint active_constr check (active in(0,1))
+);
+***/
+
+============================================
+
+create table staff
+(
+    staff_id        int(10) not null,
+    first_name      varchar(40) not null,
+    last_name       varchar(40) not null,
+    address_id      int(10) not null,
+    
+    email           varchar(40) not null,
+    store_id        int(10) not null,
+    active          tinyint check (active in(0,1)),
+    username        varchar(40) not null,
+    password        varchar(40) not null,
+    foreign key(address_id) references address(address_id),
+    foreign key(store_id) references store(store_id),
+    primary key(staff_id) 
+);
+
+============================================
+
+create table inventory
+(
+    inventory_id    int(10) not null,
+    film_id         int(10) not null,
+    store_id        int(10) not null,
+    
+    foreign key(film_id) references film(film_id),
+    foreign key(store_id) references store(store_id),
+    primary key(inventory_id) 
+);
+
+============================================
+
+create table rental
+(
+    rental_id       int(10) not null,
+    rental_date     date not null,
+    inventory_id    int(10) not null,
+    customer_id     int(10) not null,
+    return_date     date not null,
+    staff_id        int(10) not null,
+    
+    unique(rental_date),
+    unique(inventory_id),
+    unique(customer_id),
+    foreign key(inventory_id) references inventory(inventory_id),
+    foreign key(customer_id) references customer(customer_id),
+    foreign key(staff_id) references staff(staff_id),
+    primary key(rental_id) 
+);
+
+============================================
+
+create table payment
+(
+    payment_id      int(10) not null,
+    customer_id     int(10) not null,
+    staff_id        int(10) not null,
+    rental_id       int(10) not null,
+    amount          int(10) not null,
+    payment_date    date not null,
+    
+    foreign key(customer_id) references customer(customer_id),
+    foreign key(staff_id) references staff(staff_id),
+    foreign key(rental_id) references rental(rental_id),
+    primary key(payment_id),
+    constraint amount_constr check (amount >= 0)
+);
+
+
+============================================
+
+1.What is the average length of films in each category? List the results in alphabetic order of categories.
+
+
+
+
+select c.name as category_name, avg(f.length) as average_length
+from film_category as fc
+join film as f using(film_id)
+join category as c using(category_id)
+group by c.name
+order by c.name;
+
+
+
+
+
+2.Which categories have the longest and shortest average film lengths?
+
+
+
+with CategoryAvgLength as (
+  select c.name as category_name, avg(f.length) as average_length
+  from film_category as fc
+  join film as f using(film_id)
+  join category as c using(category_id)
+  group by c.name
+)
+select category_name, average_length
+from CategoryAvgLength
+where average_length = 
+    (
+        select MAX(average_length) 
+        from CategoryAvgLength
+    )
+   or 
+   average_length = 
+   (
+        select MIN(average_length) 
+        from CategoryAvgLength
+    );
+
+
+
+
+3.Which customers have rented action but not comedy or classic movies?
+
+
+
+
+select c.customer_id, c.first_name, c.last_name
+from customer as c
+join rental as r using(customer_id)
+join inventory as i using(inventory_id)
+join film as f using(film_id)
+join film_category as fc using(film_id)
+join category as cat using(category_id)
+where cat.name = 'Action'
+and c.customer_id not in (
+  select c.customer_id
+  from customer as c
+  join rental as r using(customer_id)
+  join inventory as i using(inventory_id)
+  join film as f using(film_id)
+  join film_category as fc using(film_id)
+  join category as cat using(category_id)
+  where cat.name in ('Comedy', 'Classics')
+);
+
+
+
+
+4.Which actor has appeared in the most English-language movies?
+
+
+
+
+select a.actor_id, a.first_name, a.last_name, count(*) as movie_count
+from actor as a
+join film_actor as fa using(actor_id)
+join film as f using(film_id)
+join language AS l using(language_id)
+where l.name = 'English'
+group by a.actor_id, a.first_name, a.last_name
+order by movie_count desc
+limit 1;
+
+
+
+
+5.How many distinct movies were rented for exactly 10 days from the store where Mike works?
+
+
+
+select count(r.inventory_id) as count
+from rental as r
+join staff as s using(staff_id)
+where r.return_date = DATE_ADD(r.rental_date, INTERVAL 10 DAY)
+and s.first_name = 'Mike';
+
+
+
+
+6.Alphabetically list actors who appeared in the movie with the largest cast of actors.
+
+
+
+
+with MaxActorMovieCast as (
+  select a.actor_id, a.first_name, a.last_name, COUNT(*) AS cast_count
+  from actor as a
+  join film_actor as fa using(actor_id)
+  group by a.actor_id, a.first_name, a.last_name
+)
+select m.first_name, m.last_name
+from MaxActorMovieCast as m
+where cast_count = 
+    (
+        select MAX(cast_count) 
+        from MaxActorMovieCast);
